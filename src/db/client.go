@@ -1,53 +1,53 @@
 package db
 
 import (
-	"context"
+	"bartender/src/config"
+	"fmt"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/jeroenrinzema/commander"
+	"github.com/jeroenrinzema/commander/dialects/kafka"
 )
 
-var ctx = context.Background()
-var DB *redis.Client
-var AdvertisingDB *redis.Client
+var (
+	ConfirmImpressionMessageBrokerClient *commander.Group
+	TestMessageBrokerClient              *commander.Group
+	Client                               *commander.Client
+)
 
-func NewAdvertisingClient() {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       1,  // use default DB
-	})
-	rdb.WithContext(ctx)
-	AdvertisingDB = rdb
-}
+const (
+	CONFIRM_IMPRESSION = 0
+	TESTE              = 1
+)
 
-func NewClient() {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-	rdb.WithContext(ctx)
-	DB = rdb
+func NewConnection() {
+	fmt.Println("Connecting to Kafka:", config.BrokerConnectionString)
+	dialect, err := kafka.NewDialect(config.BrokerConnectionString)
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
 
-	// err := rdb.Set(ctx, "key", "value", 0).Err()
+	warehouse := commander.NewGroup(
+		commander.NewTopic("confirm_impression", dialect, commander.CommandMessage, commander.DefaultMode),
+	)
+	warehouse2 := commander.NewGroup(
+		commander.NewTopic("teste", dialect, commander.CommandMessage, commander.DefaultMode),
+	)
+	client, err := commander.NewClient(warehouse, warehouse2)
+	if err != nil {
+		panic(err)
+	}
+	// defer client.Close()
+	// key, err := uuid.NewV4()
 	// if err != nil {
-	// 	panic(err)
+	// panic(err)
 	// }
-
-	// val, err := rdb.Get(ctx, "key").Result()
+	// command := commander.NewMessage("Available", 0, key.Bytes(), nil)
+	// err = warehouse.AsyncCommand(command)
 	// if err != nil {
-	// 	panic(err)
+	// fmt.Println(err)
 	// }
-	// fmt.Println("key", val)
-
-	// val2, err := rdb.Get(ctx, "key2").Result()
-	// if err == redis.Nil {
-	// 	fmt.Println("key2 does not exist")
-	// } else if err != nil {
-	// 	panic(err)
-	// } else {
-	// 	fmt.Println("key2", val2)
-	// }
-	// Output: key value
-	// key2 does not exist
+	ConfirmImpressionMessageBrokerClient = warehouse
+	TestMessageBrokerClient = warehouse2
+	Client = client
 }

@@ -2,16 +2,15 @@ package repositories
 
 import (
 	"bartender/src/models"
-	"math/rand"
 )
 
 type AdvertisingFilter struct {
-	Resolution     []uint64
-	Format         string
-	Categorization string
+	Name   string
+	Value  string
+	Weight float64
 }
 
-func FindAdvertising(advertisingFilter AdvertisingFilter) models.Advertising {
+func FindAdvertising(advertisingFilter []AdvertisingFilter) models.Advertising {
 	advertisings := []models.Advertising{
 		{
 			Resolution:     []uint64{1280, 720},
@@ -41,5 +40,22 @@ func FindAdvertising(advertisingFilter AdvertisingFilter) models.Advertising {
 			Etc:            "Observações e informações adicionais",
 		},
 	}
-	return advertisings[rand.Intn(2-0)+0]
+
+	var bestScore float64 = 0
+	var bestAd models.Advertising = models.Advertising{}
+
+	for _, ad := range advertisings {
+		var currentScore float64 = 0
+		for _, filter := range advertisingFilter {
+			adInfo := ad.Info[filter.Name]
+			if adInfo == filter.Value {
+				currentScore = +filter.Weight
+			}
+		}
+		if currentScore > bestScore {
+			bestScore = currentScore
+			bestAd = ad
+		}
+	}
+	return bestAd
 }

@@ -8,6 +8,7 @@ type Advertising struct {
 	Format         string
 	Categorization string
 	Etc            string
+	Info           map[string]string
 }
 
 func (a Advertising) Impression(delay float64) Impression {
