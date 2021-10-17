@@ -2,18 +2,18 @@ package repositories
 
 import (
 	"bartender/src/models"
-	"math/rand"
 )
 
 type AdvertisingFilter struct {
-	Resolution     []uint64
-	Format         string
-	Categorization string
+	Name   string
+	Value  string
+	Weight float64
 }
 
-func FindAdvertising(advertisingFilter AdvertisingFilter) models.Advertising {
+func FindAdvertising(advertisingFilter []AdvertisingFilter) models.Advertising {
 	advertisings := []models.Advertising{
 		{
+			InternalId:     "1",
 			Resolution:     []uint64{1280, 720},
 			Format:         "opening",
 			Categorization: "Categoria 1",
@@ -21,8 +21,14 @@ func FindAdvertising(advertisingFilter AdvertisingFilter) models.Advertising {
 			Name:           "Ad de Abertura",
 			Creative:       "65d98595-ffcf-44bd-9998-5740da857a4e",
 			Etc:            "Observações e informações adicionais",
+			Info: map[string]string{
+				"resolution":     "1080x720",
+				"format":         "format1",
+				"categorization": "categorization1",
+			},
 		},
 		{
+			InternalId:     "2",
 			Resolution:     []uint64{1280, 720},
 			Format:         "float",
 			Categorization: "Categoria 1",
@@ -30,8 +36,14 @@ func FindAdvertising(advertisingFilter AdvertisingFilter) models.Advertising {
 			Name:           "Ad de Float",
 			Creative:       "89kjkkf21-ffcf-44bd-9998-8891sfffxz2",
 			Etc:            "Observações e informações adicionais",
+			Info: map[string]string{
+				"resolution":     "3840×2160",
+				"format":         "format2",
+				"categorization": "categorization1",
+			},
 		},
 		{
+			InternalId:     "3",
 			Resolution:     []uint64{1280, 720},
 			Format:         "tcommerce5",
 			Categorization: "Categoria 2",
@@ -39,7 +51,29 @@ func FindAdvertising(advertisingFilter AdvertisingFilter) models.Advertising {
 			Name:           "Ad de Tcommerce5",
 			Creative:       "65d98595-ffcf-44bd-9998-5740da857a4e",
 			Etc:            "Observações e informações adicionais",
+			Info: map[string]string{
+				"resolution":     "1920x1080",
+				"format":         "format1",
+				"categorization": "categorization2",
+			},
 		},
 	}
-	return advertisings[rand.Intn(2-0)+0]
+
+	var bestScore float64 = 0
+	var bestAd models.Advertising = models.Advertising{}
+
+	for _, ad := range advertisings {
+		var currentScore float64 = 0
+		for _, filter := range advertisingFilter {
+			adInfo := ad.Info[filter.Name]
+			if adInfo == filter.Value {
+				currentScore += filter.Weight
+			}
+		}
+		if currentScore > bestScore {
+			bestScore = currentScore
+			bestAd = ad
+		}
+	}
+	return bestAd
 }

@@ -8,11 +8,9 @@ import (
 
 func Generate() *fiber.App {
 	f := fiber.New(fiber.Config{
-		// Prefork:       true,
 		CaseSensitive: true,
-		// StrictRouting: true,
-		ServerHeader: "Bartender",
-		AppName:      "Bartender service v1.0.0-SNAPSHOT",
+		ServerHeader:  "Bartender",
+		AppName:       "Bartender service v1.0.0-SNAPSHOT",
 	})
 	return routes.Configure(f)
 }

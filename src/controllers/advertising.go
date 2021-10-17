@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"bartender/src/db"
 	"bartender/src/models"
 	"bartender/src/repositories"
-	"bartender/src/sliceUtils"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -13,46 +13,50 @@ func ChooseAdvertising(c *fiber.Ctx) error {
 	if err := c.BodyParser(&params); err != nil {
 		return fiber.NewError(fiber.StatusUnprocessableEntity, err.Error())
 	}
-	var resolution []uint64
-	if params.UserInfo != nil && params.UserInfo["resolution"] != nil {
-		genericResolutions := sliceUtils.InterfaceSlice(params.UserInfo["resolution"])
-		resolution := make([]uint64, len(genericResolutions))
-		for i, value := range genericResolutions {
-			val, ok := value.(uint64)
-			if ok {
-				resolution[i] = val
-			}
-		}
+	filter := []repositories.AdvertisingFilter{
+		{
+			Name:   "resolution",
+			Value:  params.UserInfo["resolution"],
+			Weight: 20,
+		},
+		{
+			Name:   "format",
+			Value:  params.UserInfo["format"],
+			Weight: 10,
+		},
+		{
+			Name:   "categorization",
+			Value:  params.UserInfo["categorization"],
+			Weight: 30,
+		},
 	}
-	var format string
-	allowedFormatLen := len(params.AllowedFormats)
-	if allowedFormatLen > 0 {
-		if params.ContainsAllowedFormat(models.Opening) {
-			format = string(models.Opening)
-		} else {
-			if len(params.AllowedFormats) == 1 {
-				format = string(params.AllowedFormats[0])
-			} else {
-				format = string(models.Float)
-			}
-		}
-	}
-
-	filter := repositories.AdvertisingFilter{
-		Resolution:     resolution,
-		Format:         format,
-		Categorization: params.UserCategorization,
-	}
-
 	advertising := repositories.FindAdvertising(filter)
+	go SendRequestInfo(params)
 	return c.JSON(advertising.Impression(10.5))
+}
+
+func toString(bs []uint64) string {
+	b := make([]byte, len(bs))
+	for i, v := range bs {
+		b[i] = byte(v)
+	}
+	return string(b)
 }
 
 func ConfirmImpression(c *fiber.Ctx) error {
 	var confirmImpression models.ConfirmImpression
 	if err := c.BodyParser(&confirmImpression); err != nil {
-		return fiber.NewError(fiber.StatusUnprocessableEntity, err.Error())
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
+	go SendImpressionInfo(confirmImpression)
 	c.Response().SetStatusCode(fiber.StatusNoContent)
 	return c.Send(nil)
+}
+
+func SendImpressionInfo(confirmImpression models.ConfirmImpression) {
+	db.SendAsynMessage(db.CONFIRM_IMPRESSION, confirmImpression)
+}
+
+func SendRequestInfo(params models.Params) {
+	db.SendAsynMessage(db.REQUEST_AD, params)
 }
