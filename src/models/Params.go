@@ -9,11 +9,11 @@ const (
 )
 
 type Params struct {
-	AppId              string                 `json:"app_id,omitempty"`
-	UserId             string                 `json:"user_id,omitempty"`
-	AllowedFormats     []Format               `json:"allowed_formats,omitempty"`
-	UserCategorization string                 `json:"user_categorization,omitempty"`
-	UserInfo           map[string]interface{} `json:"user_info,omitempty"`
+	AppId              string            `json:"app_id,omitempty"`
+	UserId             string            `json:"user_id,omitempty"`
+	AllowedFormats     []Format          `json:"allowed_formats,omitempty"`
+	UserCategorization string            `json:"user_categorization,omitempty"`
+	UserInfo           map[string]string `json:"user_info,omitempty"`
 }
 
 func (i Params) ContainsAllowedFormat(allowedFormat Format) bool {

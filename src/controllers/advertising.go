@@ -4,14 +4,8 @@ import (
 	"bartender/src/db"
 	"bartender/src/models"
 	"bartender/src/repositories"
-	"bartender/src/sliceUtils"
-	"bytes"
-	"encoding/json"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofrs/uuid"
-	"github.com/jeroenrinzema/commander"
 )
 
 func ChooseAdvertising(c *fiber.Ctx) error {
@@ -19,49 +13,25 @@ func ChooseAdvertising(c *fiber.Ctx) error {
 	if err := c.BodyParser(&params); err != nil {
 		return fiber.NewError(fiber.StatusUnprocessableEntity, err.Error())
 	}
-	var resolution []uint64
-	if params.UserInfo != nil && params.UserInfo["resolution"] != nil {
-		genericResolutions := sliceUtils.InterfaceSlice(params.UserInfo["resolution"])
-		resolution := make([]uint64, len(genericResolutions))
-		for i, value := range genericResolutions {
-			val, ok := value.(uint64)
-			if ok {
-				resolution[i] = val
-			}
-		}
-	}
-	var format string
-	allowedFormatLen := len(params.AllowedFormats)
-	if allowedFormatLen > 0 {
-		if params.ContainsAllowedFormat(models.Opening) {
-			format = string(models.Opening)
-		} else {
-			if len(params.AllowedFormats) == 1 {
-				format = string(params.AllowedFormats[0])
-			} else {
-				format = string(models.Float)
-			}
-		}
-	}
 	filter := []repositories.AdvertisingFilter{
 		{
-			Name:   "Resolution",
-			Value:  toString(resolution),
+			Name:   "resolution",
+			Value:  params.UserInfo["resolution"],
 			Weight: 20,
 		},
 		{
-			Name:   "Format",
-			Value:  format,
+			Name:   "format",
+			Value:  params.UserInfo["format"],
 			Weight: 10,
 		},
 		{
-			Name:   "Categorization",
-			Value:  params.UserCategorization,
+			Name:   "categorization",
+			Value:  params.UserInfo["categorization"],
 			Weight: 30,
 		},
 	}
-
 	advertising := repositories.FindAdvertising(filter)
+	go SendRequestInfo(params)
 	return c.JSON(advertising.Impression(10.5))
 }
 
@@ -84,15 +54,9 @@ func ConfirmImpression(c *fiber.Ctx) error {
 }
 
 func SendImpressionInfo(confirmImpression models.ConfirmImpression) {
-	key, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println(err)
-	}
-	reqBodyBytes := new(bytes.Buffer)
-	json.NewEncoder(reqBodyBytes).Encode(confirmImpression)
-	command := commander.NewMessage("", 0, key.Bytes(), reqBodyBytes.Bytes())
-	err = db.ConfirmImpressionMessageBrokerClient.AsyncCommand(command)
-	if err != nil {
-		fmt.Println(err)
-	}
+	db.SendAsynMessage(db.CONFIRM_IMPRESSION, confirmImpression)
+}
+
+func SendRequestInfo(params models.Params) {
+	db.SendAsynMessage(db.REQUEST_AD, params)
 }
