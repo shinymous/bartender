@@ -1,8 +1,6 @@
-package repositories
+package advertising
 
-import (
-	"bartender/src/models"
-)
+import "bartender/internal/advertising/models"
 
 func FindAdvertising(advertisingFilter []models.AdvertisingFilter) models.Advertising {
 	advertisings := []models.Advertising{

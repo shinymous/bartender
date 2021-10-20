@@ -14,7 +14,7 @@ type Route struct {
 }
 
 func Configure(f *fiber.App) *fiber.App {
-	routes := advertisingRoutes
+	routes := GetAdvertisingRoutes()
 	api := f.Group("/", middleware)
 	for _, route := range routes {
 		api.Add(route.Method, route.URI, route.Function)
