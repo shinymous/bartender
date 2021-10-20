@@ -13,21 +13,18 @@ func ChooseAdvertising(c *fiber.Ctx) error {
 	if err := c.BodyParser(&params); err != nil {
 		return fiber.NewError(fiber.StatusUnprocessableEntity, err.Error())
 	}
-	filter := []repositories.AdvertisingFilter{
+	filter := []models.AdvertisingFilter{
 		{
-			Name:   "resolution",
-			Value:  params.UserInfo["resolution"],
-			Weight: 20,
+			Name:  "resolution",
+			Value: params.UserInfo["resolution"],
 		},
 		{
-			Name:   "format",
-			Value:  params.UserInfo["format"],
-			Weight: 10,
+			Name:  "format",
+			Value: params.UserInfo["format"],
 		},
 		{
-			Name:   "categorization",
-			Value:  params.UserInfo["categorization"],
-			Weight: 30,
+			Name:  "categorization",
+			Value: params.UserInfo["categorization"],
 		},
 	}
 	advertising := repositories.FindAdvertising(filter)

@@ -9,7 +9,15 @@ type Advertising struct {
 	Format         string
 	Categorization string
 	Etc            string
-	Info           map[string]string
+	Info           map[string]Criteria
+}
+type Criteria struct {
+	Value  string
+	Weight float64
+}
+type AdvertisingFilter struct {
+	Name  string
+	Value string
 }
 
 func (a Advertising) Impression(delay float64) Impression {
