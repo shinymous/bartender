@@ -17,14 +17,14 @@ func NewAdvertisingService(broker BrokerConnection) AdvertisingService {
 }
 
 func (s *advertisingService) ChooseAdvertising(c *fiber.Ctx) error {
-	return AhooseAdvertising(s.broker, c)
+	return ChooseAdvertising(s.broker, c)
 }
 
 func (s *advertisingService) ConfirmImpression(c *fiber.Ctx) error {
 	return ConfirmImpression(s.broker, c)
 }
 
-func AhooseAdvertising(brokerClient BrokerConnection, c *fiber.Ctx) error {
+func ChooseAdvertising(brokerClient BrokerConnection, c *fiber.Ctx) error {
 	var params models.Params
 	if err := c.BodyParser(&params); err != nil {
 		return fiber.NewError(fiber.StatusUnprocessableEntity, err.Error())

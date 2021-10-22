@@ -12,13 +12,13 @@ func GetAdvertisingRoutes() []Route {
 		{
 			URI:                   "/choose-ad",
 			Method:                http.MethodPost,
-			Function:              advertising.ChooseAdvertising,
+			Function:              advertisingService.ChooseAdvertising,
 			RequireAuthentication: false,
 		},
 		{
 			URI:                   "/confirm-impression",
 			Method:                http.MethodPost,
-			Function:              advertising.ConfirmImpression,
+			Function:              advertisingService.ConfirmImpression,
 			RequireAuthentication: false,
 		},
 	}
