@@ -48,7 +48,7 @@ func newKafkaWriter(topic string) *kafka.Writer {
 	}
 }
 
-func CreateTopics() {
+func createTopics() {
 	conn, err := kafka.Dial("tcp", os.Getenv("BROKERS"))
 	if err != nil {
 		panic(err.Error())
@@ -86,7 +86,7 @@ func CreateTopics() {
 }
 
 func CreateConnection() BrokerConnection {
-	CreateTopics()
+	createTopics()
 	return &brokerConnection{
 		CONFIRM_IMPRESSION: CONFIRM_IMPRESSION,
 		REQUEST_AD:         REQUEST_AD,
