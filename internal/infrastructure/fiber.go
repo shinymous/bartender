@@ -16,5 +16,5 @@ func Run() {
 	broker := advertising.CreateConnection()
 	advertisingService := advertising.NewAdvertisingService(broker)
 	advertising.NewAdvertisingHandler(app.Group("/api"), advertisingService)
-	log.Fatal(app.Listen("localhost:5000"))
+	log.Fatal(app.Listen(":8080"))
 }

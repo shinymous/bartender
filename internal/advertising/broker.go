@@ -2,21 +2,20 @@ package advertising
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
-	"log"
+	"net"
 	"os"
+	"strconv"
 
 	"github.com/gofrs/uuid"
-	"github.com/jeroenrinzema/commander"
-	"github.com/jeroenrinzema/commander/dialects/kafka"
-	"github.com/joho/godotenv"
+	kafka "github.com/segmentio/kafka-go"
 )
 
 var (
-	ConfirmImpressionMessageBrokerClient *commander.Group
-	RequestMessageBrokerClient           *commander.Group
-	Client                               *commander.Client
+	ConfirmImpressionTopicConn *kafka.Writer
+	RequestAdTopicConn         *kafka.Writer
 )
 
 const (
@@ -25,11 +24,10 @@ const (
 )
 
 type brokerConnection struct {
-	CONFIRM_IMPRESSION                   string
-	REQUEST_AD                           string
-	ConfirmImpressionMessageBrokerClient *commander.Group
-	RequestMessageBrokerClient           *commander.Group
-	Client                               *commander.Client
+	CONFIRM_IMPRESSION         string
+	REQUEST_AD                 string
+	ConfirmImpressionTopicConn *kafka.Writer
+	RequestAdTopicConn         *kafka.Writer
 }
 
 type BrokerConfig struct {
@@ -42,38 +40,56 @@ type BrokerConnection interface {
 	GetBrokerConfig() BrokerConfig
 }
 
-func CreateConnection() BrokerConnection {
-	var erro error
-	if erro = godotenv.Load("../../.env"); erro != nil {
-		log.Fatal(erro)
+func newKafkaWriter(topic string) *kafka.Writer {
+	return &kafka.Writer{
+		Addr:     kafka.TCP(os.Getenv("BROKERS")),
+		Topic:    topic,
+		Balancer: &kafka.LeastBytes{},
 	}
-	brokerConnectionString := fmt.Sprintf("brokers=%s initial-offset=newest version=%s", os.Getenv("BROKERS"), os.Getenv("CLUSTER_VERSION"))
-	fmt.Println("Connecting to Kafka:", brokerConnectionString)
-	dialect, err := kafka.NewDialect(brokerConnectionString)
+}
+
+func CreateTopics() {
+	conn, err := kafka.Dial("tcp", os.Getenv("BROKERS"))
 	if err != nil {
-		fmt.Println(err)
-		panic(err)
+		panic(err.Error())
+	}
+	defer conn.Close()
+
+	controller, err := conn.Controller()
+	if err != nil {
+		panic(err.Error())
+	}
+	var controllerConn *kafka.Conn
+	controllerConn, err = kafka.Dial("tcp", net.JoinHostPort(controller.Host, strconv.Itoa(controller.Port)))
+	if err != nil {
+		panic(err.Error())
+	}
+	defer controllerConn.Close()
+
+	topicConfigs := []kafka.TopicConfig{
+		{
+			Topic:             CONFIRM_IMPRESSION,
+			NumPartitions:     1,
+			ReplicationFactor: 1,
+		},
+		{
+			Topic:             REQUEST_AD,
+			NumPartitions:     1,
+			ReplicationFactor: 1,
+		},
 	}
 
-	warehouse := commander.NewGroup(
-		commander.NewTopic(CONFIRM_IMPRESSION, dialect, commander.CommandMessage, commander.DefaultMode),
-	)
-	warehouse2 := commander.NewGroup(
-		commander.NewTopic(REQUEST_AD, dialect, commander.CommandMessage, commander.DefaultMode),
-	)
-	client, err := commander.NewClient(warehouse, warehouse2)
+	err = controllerConn.CreateTopics(topicConfigs...)
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
-	ConfirmImpressionMessageBrokerClient = warehouse
-	RequestMessageBrokerClient = warehouse2
-	Client = client
+}
+
+func CreateConnection() BrokerConnection {
+	CreateTopics()
 	return &brokerConnection{
-		CONFIRM_IMPRESSION:                   CONFIRM_IMPRESSION,
-		REQUEST_AD:                           REQUEST_AD,
-		ConfirmImpressionMessageBrokerClient: warehouse,
-		RequestMessageBrokerClient:           warehouse2,
-		Client:                               client,
+		CONFIRM_IMPRESSION: CONFIRM_IMPRESSION,
+		REQUEST_AD:         REQUEST_AD,
 	}
 }
 
@@ -85,20 +101,25 @@ func (b brokerConnection) GetBrokerConfig() BrokerConfig {
 }
 
 func (b brokerConnection) SendAsynMessage(topicName string, data interface{}) {
+	writer := newKafkaWriter(topicName)
+	defer writer.Close()
 	key, err := uuid.NewV4()
 	if err != nil {
 		fmt.Println(err)
 	}
 	reqBodyBytes := new(bytes.Buffer)
 	json.NewEncoder(reqBodyBytes).Encode(data)
-	fmt.Println(data)
-	command := commander.NewMessage("", 0, key.Bytes(), reqBodyBytes.Bytes())
-	if topicName == b.CONFIRM_IMPRESSION {
-		err = ConfirmImpressionMessageBrokerClient.AsyncCommand(command)
-	} else {
-		err = RequestMessageBrokerClient.AsyncCommand(command)
+	msg := kafka.Message{
+		Key:   key.Bytes(),
+		Value: reqBodyBytes.Bytes(),
 	}
-	if err != nil {
-		fmt.Println(err)
+	if topicName == b.CONFIRM_IMPRESSION {
+		if err := writer.WriteMessages(context.Background(), msg); err != nil {
+			fmt.Println(err.Error())
+		}
+	} else {
+		if err := writer.WriteMessages(context.Background(), msg); err != nil {
+			fmt.Println(err.Error())
+		}
 	}
 }

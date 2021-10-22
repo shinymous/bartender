@@ -2,7 +2,6 @@ package advertising
 
 import (
 	"bartender/internal/advertising/models"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -72,7 +71,5 @@ func SendImpressionInfo(brokerClient BrokerConnection, confirmImpression models.
 }
 
 func SendRequestInfo(brokerClient BrokerConnection, params models.Params) {
-	fmt.Println(brokerClient)
-	fmt.Println(params)
 	brokerClient.SendAsynMessage(brokerClient.GetBrokerConfig().REQUEST_AD, params)
 }
