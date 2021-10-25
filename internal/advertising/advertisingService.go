@@ -2,6 +2,8 @@ package advertising
 
 import (
 	"bartender/internal/advertising/models"
+	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -29,18 +31,39 @@ func ChooseAdvertising(brokerClient BrokerConnection, c *fiber.Ctx) error {
 	if err := c.BodyParser(&params); err != nil {
 		return fiber.NewError(fiber.StatusUnprocessableEntity, err.Error())
 	}
+
 	filter := []models.AdvertisingFilter{
 		{
-			Name:  "resolution",
-			Value: params.UserInfo["resolution"],
+			Name:  "resolutionW",
+			Value: strconv.Itoa(int(params.Context.Device.W)),
+		},
+		{
+			Name:  "resolutionH",
+			Value: strconv.Itoa(int(params.Context.Device.H)),
 		},
 		{
 			Name:  "format",
-			Value: params.UserInfo["format"],
+			Value: params.Item[0].Spec.TagID,
 		},
 		{
-			Name:  "categorization",
-			Value: params.UserInfo["categorization"],
+			Name:  "keywords",
+			Value: strings.Split(params.Context.User.Keywords, ","),
+		},
+		{
+			Name:  "gender",
+			Value: params.Context.User.Gender,
+		},
+		{
+			Name:  "yearOfBirth",
+			Value: strconv.Itoa(int(params.Context.User.Yob)),
+		},
+		{
+			Name:  "city",
+			Value: params.Context.User.Geo.City,
+		},
+		{
+			Name:  "deviceModel",
+			Value: params.Context.Device.Model,
 		},
 	}
 	advertising := FindAdvertising(filter)

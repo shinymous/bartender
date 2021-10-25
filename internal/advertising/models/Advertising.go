@@ -1,23 +1,20 @@
 package models
 
 type Advertising struct {
-	InternalId     string
-	ImpressionId   string
-	Name           string
-	Creative       string
-	Resolution     []uint64
-	Format         string
-	Categorization string
-	Etc            string
-	Info           map[string]Criteria
+	InternalId   string
+	ImpressionId string
+	Name         string
+	Creative     string
+	Etc          string
+	Info         map[string]Criteria
 }
 type Criteria struct {
-	Value  string
+	Value  interface{}
 	Weight float64
 }
 type AdvertisingFilter struct {
 	Name  string
-	Value string
+	Value interface{}
 }
 
 func (a Advertising) Impression(delay float64) Impression {
