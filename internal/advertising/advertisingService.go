@@ -2,7 +2,6 @@ package advertising
 
 import (
 	"bartender/internal/advertising/models"
-	"strconv"
 	"strings"
 	"time"
 
@@ -38,44 +37,21 @@ func (s *advertisingService) ChooseAdvertising(c *fiber.Ctx) error {
 		}
 	}
 
-	filter := []models.AdvertisingFilter{
-		{
-			Name:  "resolutionW",
-			Value: strconv.Itoa(int(params.Context.Device.W)),
-		},
-		{
-			Name:  "resolutionH",
-			Value: strconv.Itoa(int(params.Context.Device.H)),
-		},
-		{
-			Name:  "format",
-			Value: params.Item[0].Spec.TagID,
-		},
-		{
-			Name:  "keywords",
-			Value: strings.Split(params.Context.User.Keywords, ","),
-		},
-		{
-			Name:  "gender",
-			Value: params.Context.User.Gender,
-		},
-		{
-			Name:  "yearOfBirth",
-			Value: strconv.Itoa(int(params.Context.User.Yob)),
-		},
-		{
-			Name:  "city",
-			Value: params.Context.User.Geo.City,
-		},
-		{
-			Name:  "deviceModel",
-			Value: params.Context.Device.Model,
-		},
+	filter := models.AdvertisingFilter{
+		ResolutionH: params.Context.Device.H,
+		ResolutionW: params.Context.Device.W,
+		Format:      params.Item[0].Spec.TagID,
+		Keywords:    strings.Split(params.Context.User.Keywords, ","),
+		Gender:      params.Context.User.Gender,
+		YearOfBirth: params.Context.User.Yob,
+		City:        params.Context.User.Geo.City,
+		DeviceModel: params.Context.Device.Model,
 	}
+
 	advertising := s.repository.FindAdvertising(filter)
 	go SendRequestInfo(s.broker, params)
-	s.repository.SaveUserInfo(params.Context.User.ID, models.UserInfo{Timestamp: time.Now(), LastImpression: advertising.ImpressionId})
-	return c.JSON(advertising.Impression(10.5))
+	go s.repository.SaveUserInfo(params.Context.User.ID, models.UserInfo{Timestamp: time.Now(), LastImpression: advertising.ImpressionId})
+	return c.JSON(advertising)
 }
 
 func (s *advertisingService) ConfirmImpression(c *fiber.Ctx) error {

@@ -30,6 +30,6 @@ type BrokerConnection struct {
 type AdvertisingRepository interface {
 	GetUserInfo(ID string) (models.UserInfo, error)
 	SaveUserInfo(ID string, userInfo models.UserInfo) error
-	FindAdvertising(advertisingFilter []models.AdvertisingFilter) models.Advertising
-	FindAdvertisingTest() models.AdvertisingTest
+	FindAdvertising(advertisingFilter models.AdvertisingFilter) models.Advertising
+	FindAdvertisingTest() models.Advertising
 }

@@ -71,7 +71,7 @@ type User struct {
 	Data     []string `json:"data,omitempty"`
 	Keywords string   `json:"keywords,omitempty"`
 	Yob      int64    `json:"yob,omitempty"`
-	Gender   Gender   `json:"gender,omitempty"`
+	Gender   string   `json:"gender,omitempty"`
 	Geo      Geo      `json:"geo,omitempty"`
 }
 

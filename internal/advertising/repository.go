@@ -44,8 +44,8 @@ func (r *redisClientRepository) SaveUserInfo(ID string, userInfo models.UserInfo
 	return nil
 }
 
-func (r *redisClientRepository) FindAdvertisingTest() models.AdvertisingTest {
-	advertisingTests := []models.AdvertisingTest{
+func (r *redisClientRepository) FindAdvertisingTest() models.Advertising {
+	advertisingTests := []models.Advertising{
 		{
 			ImpressionId: "16be3bbe-379d-4917-9f09-998f4d6d58d2",
 			CreativeId:   "db477daf-0b6e-4643-8a66-b07042a2dc67",
@@ -74,57 +74,225 @@ func (r *redisClientRepository) FindAdvertisingTest() models.AdvertisingTest {
 	return advertisingTests[rand.Intn(2)]
 }
 
-func (r *redisClientRepository) FindAdvertising(advertisingFilter []models.AdvertisingFilter) models.Advertising {
+func (r *redisClientRepository) FindAdvertising(advertisingFilter models.AdvertisingFilter) models.Advertising {
 	advertisings := []models.Advertising{
 		{
-			InternalId:   "1",
-			ImpressionId: "db477daf-0b6e-4643-8a66-b07042a2dc67",
-			Name:         "Ad de Abertura",
-			Creative:     "65d98595-ffcf-44bd-9998-5740da857a4e",
-			Etc:          "Observações e informações adicionais",
-			Info: map[string]models.Criteria{
-				"resolutionW": {Value: "1080", Weight: 50},
-				"resolutionH": {Value: "720", Weight: 50},
-				"format":      {Value: "float", Weight: 1500},
-				"keywords":    {Value: []string{"key1", "key2", "key3"}, Weight: 15},
-				"gender":      {Value: "M", Weight: 10},
-				"yearOfBirth": {Value: "25", Weight: 45},
-				"city":        {Value: "São José", Weight: 10},
-				"deviceModel": {Value: "Samsung", Weight: 31},
+			ImpressionId: "16be3bbe-379d-4917-9f09-998f4d6d58d2",
+			CreativeId:   "db477daf-0b6e-4643-8a66-b07042a2dc67",
+			PublisherId:  "051ce532-cd18-47a8-ad16-287111cf354d",
+			CampaignId:   "12593110-97a7-4f26-bc35-b46554a6602b",
+			AdvertiserId: "051ce532-cd18-47a8-ad16-287111cf354d",
+			DS:           "g34f4g4sj8923nhd",
+			Criteria: models.AdvertisingCriteria{
+				ResolutionW: []models.Criteria{
+					{
+						Value: 1920, Weight: 11,
+					},
+				},
+				ResolutionH: []models.Criteria{
+					{
+						Value: 1080, Weight: 11,
+					},
+				},
+				Format: []models.Criteria{
+					{
+						Value: "opening", Weight: 1500,
+					},
+				},
+				Keywords: []models.Criteria{
+					{
+						Value:  "key121",
+						Weight: 10,
+					},
+					{
+						Value:  "key212",
+						Weight: 20,
+					},
+					{
+						Value:  "key333",
+						Weight: 40,
+					},
+				},
+				Gender: []models.Criteria{
+					{
+						Value:  "M",
+						Weight: 100,
+					},
+					{
+						Value:  "F",
+						Weight: 20,
+					},
+				},
+				YearOfBirth: []models.YearOfBirth{
+					{
+						Min:    45,
+						Max:    50,
+						Weight: 50,
+					},
+					{
+						Min:    10,
+						Max:    30,
+						Weight: 30,
+					},
+				},
+				City: []models.Criteria{
+					{
+						Value:  "Florianópolis",
+						Weight: 20,
+					},
+				},
+				DeviceModel: []models.Criteria{
+					{
+						Value:  "LG",
+						Weight: 15,
+					},
+				},
 			},
 		},
 		{
-			InternalId:   "2",
-			ImpressionId: "db477daf-0b6e-4643-8a66-b07042a2dc67",
-			Name:         "Ad de Float",
-			Creative:     "89kjkkf21-ffcf-44bd-9998-8891sfffxz2",
-			Etc:          "Observações e informações adicionais",
-			Info: map[string]models.Criteria{
-				"resolutionW": {Value: "3840", Weight: 41},
-				"resolutionH": {Value: "2160", Weight: 41},
-				"format":      {Value: "tcommerce5", Weight: 1500},
-				"keywords":    {Value: []string{"key12", "key21", "key33"}, Weight: 10},
-				"gender":      {Value: "F", Weight: 50},
-				"yearOfBirth": {Value: "30", Weight: 20},
-				"city":        {Value: "Palhoça", Weight: 10},
-				"deviceModel": {Value: "TCL", Weight: 15},
+			ImpressionId: "16be3bbe-379d-4917-9f09-998f4d6d58d2",
+			CreativeId:   "db477daf-0b6e-4643-8a66-b07042a2dc67",
+			PublisherId:  "051ce532-cd18-47a8-ad16-287111cf354d",
+			CampaignId:   "12593110-97a7-4f26-bc35-b46554a6602b",
+			AdvertiserId: "051ce532-cd18-47a8-ad16-287111cf354d",
+			DS:           "g34f4g4sj8923nhd",
+			Criteria: models.AdvertisingCriteria{
+				ResolutionW: []models.Criteria{
+					{
+						Value: 1920, Weight: 11,
+					},
+				},
+				ResolutionH: []models.Criteria{
+					{
+						Value: 1080, Weight: 11,
+					},
+				},
+				Format: []models.Criteria{
+					{
+						Value: "opening", Weight: 1500,
+					},
+				},
+				Keywords: []models.Criteria{
+					{
+						Value:  "key121",
+						Weight: 10,
+					},
+					{
+						Value:  "key212",
+						Weight: 20,
+					},
+					{
+						Value:  "key333",
+						Weight: 40,
+					},
+				},
+				Gender: []models.Criteria{
+					{
+						Value:  "M",
+						Weight: 100,
+					},
+					{
+						Value:  "F",
+						Weight: 20,
+					},
+				},
+				YearOfBirth: []models.YearOfBirth{
+					{
+						Min:    45,
+						Max:    50,
+						Weight: 50,
+					},
+					{
+						Min:    10,
+						Max:    30,
+						Weight: 30,
+					},
+				},
+				City: []models.Criteria{
+					{
+						Value:  "Florianópolis",
+						Weight: 20,
+					},
+				},
+				DeviceModel: []models.Criteria{
+					{
+						Value:  "LG",
+						Weight: 15,
+					},
+				},
 			},
 		},
 		{
-			InternalId:   "3",
-			ImpressionId: "db4331s-0b6e-4643-8a66-b0s5gffa0",
-			Name:         "Ad de Tcommerce5",
-			Creative:     "65d98595-ffcf-44bd-9998-5740da857a4e",
-			Etc:          "Observações e informações adicionais",
-			Info: map[string]models.Criteria{
-				"resolutionW": {Value: "1920", Weight: 11},
-				"resolutionH": {Value: "1080", Weight: 11},
-				"format":      {Value: "opening", Weight: 1500},
-				"keywords":    {Value: []string{"key121", "key212", "key333"}, Weight: 70},
-				"gender":      {Value: "M", Weight: 100},
-				"yearOfBirth": {Value: "55", Weight: 50},
-				"city":        {Value: "Florianópolis", Weight: 20},
-				"deviceModel": {Value: "LG", Weight: 15},
+			ImpressionId: "16be3bbe-379d-4917-9f09-998f4d6d58d2",
+			CreativeId:   "db477daf-0b6e-4643-8a66-b07042a2dc67",
+			PublisherId:  "051ce532-cd18-47a8-ad16-287111cf354d",
+			CampaignId:   "12593110-97a7-4f26-bc35-b46554a6602b",
+			AdvertiserId: "051ce532-cd18-47a8-ad16-287111cf354d",
+			DS:           "g34f4g4sj8923nhd",
+			Criteria: models.AdvertisingCriteria{
+				ResolutionW: []models.Criteria{
+					{
+						Value: 1920, Weight: 11,
+					},
+				},
+				ResolutionH: []models.Criteria{
+					{
+						Value: 1080, Weight: 11,
+					},
+				},
+				Format: []models.Criteria{
+					{
+						Value: "opening", Weight: 1500,
+					},
+				},
+				Keywords: []models.Criteria{
+					{
+						Value:  "key121",
+						Weight: 10,
+					},
+					{
+						Value:  "key212",
+						Weight: 20,
+					},
+					{
+						Value:  "key333",
+						Weight: 40,
+					},
+				},
+				Gender: []models.Criteria{
+					{
+						Value:  "M",
+						Weight: 100,
+					},
+					{
+						Value:  "F",
+						Weight: 20,
+					},
+				},
+				YearOfBirth: []models.YearOfBirth{
+					{
+						Min:    45,
+						Max:    50,
+						Weight: 50,
+					},
+					{
+						Min:    10,
+						Max:    30,
+						Weight: 30,
+					},
+				},
+				City: []models.Criteria{
+					{
+						Value:  "Florianópolis",
+						Weight: 20,
+					},
+				},
+				DeviceModel: []models.Criteria{
+					{
+						Value:  "LG",
+						Weight: 15,
+					},
+				},
 			},
 		},
 	}
@@ -134,13 +302,54 @@ func (r *redisClientRepository) FindAdvertising(advertisingFilter []models.Adver
 
 	for _, ad := range advertisings {
 		var currentScore float64 = 0
-		for _, filter := range advertisingFilter {
-			adInfo := ad.Info[filter.Name]
-			if isSlice(filter.Value) {
-				continue
+
+		for _, city := range ad.Criteria.City {
+			if city.Value == advertisingFilter.City {
+				currentScore += city.Weight
 			}
-			if adInfo.Value == filter.Value {
-				currentScore += adInfo.Weight
+		}
+
+		for _, deviceModel := range ad.Criteria.DeviceModel {
+			if deviceModel.Value == advertisingFilter.DeviceModel {
+				currentScore += deviceModel.Weight
+			}
+		}
+
+		for _, format := range ad.Criteria.Format {
+			if format.Value == advertisingFilter.Format {
+				currentScore += format.Weight
+			}
+		}
+
+		for _, gender := range ad.Criteria.Gender {
+			if gender.Value == advertisingFilter.Gender {
+				currentScore += gender.Weight
+			}
+		}
+
+		for _, keyword := range ad.Criteria.Keywords {
+			for _, filterKeyword := range advertisingFilter.Keywords {
+				if keyword.Value == filterKeyword {
+					currentScore += keyword.Weight
+				}
+			}
+		}
+
+		for _, resolutionH := range ad.Criteria.ResolutionH {
+			if resolutionH.Value == advertisingFilter.ResolutionH {
+				currentScore += resolutionH.Weight
+			}
+		}
+
+		for _, resolutionW := range ad.Criteria.ResolutionW {
+			if resolutionW.Value == advertisingFilter.ResolutionW {
+				currentScore += resolutionW.Weight
+			}
+		}
+
+		for _, yearOfBirth := range ad.Criteria.YearOfBirth {
+			if advertisingFilter.YearOfBirth > yearOfBirth.Min && advertisingFilter.YearOfBirth < yearOfBirth.Max {
+				currentScore += yearOfBirth.Weight
 			}
 		}
 		if currentScore > bestScore {
@@ -148,6 +357,8 @@ func (r *redisClientRepository) FindAdvertising(advertisingFilter []models.Adver
 			bestAd = ad
 		}
 	}
+
+	bestAd.Criteria = models.AdvertisingCriteria{}
 	return bestAd
 }
 

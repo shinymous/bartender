@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"os"
 	"strconv"
 
 	"github.com/gofrs/uuid"
@@ -41,14 +42,14 @@ type BrokerConnection interface {
 
 func newKafkaWriter(topic string) *kafka.Writer {
 	return &kafka.Writer{
-		Addr:     kafka.TCP("localhost:29092"),
+		Addr:     kafka.TCP(os.Getenv("BROKERS")),
 		Topic:    topic,
 		Balancer: &kafka.LeastBytes{},
 	}
 }
 
 func createTopics() {
-	conn, err := kafka.Dial("tcp", "localhost:29092")
+	conn, err := kafka.Dial("tcp", os.Getenv("BROKERS"))
 	if err != nil {
 		panic(err.Error())
 	}
