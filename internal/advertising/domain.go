@@ -9,3 +9,15 @@ type AdvertisingService interface {
 
 type Broker interface {
 }
+
+type Topic struct {
+	ConfirmImpression string
+	RequestAd         string
+}
+
+type SendAsynMessage func(topicName string, data interface{})
+
+type BrokerConnection struct {
+	SendAsynMessage SendAsynMessage
+	Topic           Topic
+}

@@ -90,9 +90,9 @@ func ConfirmImpression(brokerClient BrokerConnection, c *fiber.Ctx) error {
 }
 
 func SendImpressionInfo(brokerClient BrokerConnection, confirmImpression models.ConfirmImpression) {
-	brokerClient.SendAsynMessage(brokerClient.GetBrokerConfig().CONFIRM_IMPRESSION, confirmImpression)
+	brokerClient.SendAsynMessage(brokerClient.Topic.ConfirmImpression, confirmImpression)
 }
 
 func SendRequestInfo(brokerClient BrokerConnection, params models.Params) {
-	brokerClient.SendAsynMessage(brokerClient.GetBrokerConfig().REQUEST_AD, params)
+	brokerClient.SendAsynMessage(brokerClient.Topic.RequestAd, params)
 }
