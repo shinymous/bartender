@@ -12,4 +12,5 @@ func NewAdvertisingHandler(advertisingRoute fiber.Router, as AdvertisingService)
 	}
 	advertisingRoute.Post("/choose-ad", handler.advertisingService.ChooseAdvertising)
 	advertisingRoute.Post("/confirm-impression", handler.advertisingService.ConfirmImpression)
+	advertisingRoute.Post("/choose-ad-test", handler.advertisingService.ChooseAdTest)
 }

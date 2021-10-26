@@ -8,6 +8,16 @@ type Advertising struct {
 	Etc          string
 	Info         map[string]Criteria
 }
+
+type AdvertisingTest struct {
+	ImpressionId string `json:"impression_id,omitempty"`
+	CreativeId   string `json:"creative_id,omitempty"`
+	PublisherId  string `json:"publisher_id,omitempty"`
+	CampaignId   string `json:"campaign_id,omitempty"`
+	AdvertiserId string `json:"advertiser_id,omitempty"`
+	DS           string `json:"ds,omitempty"`
+}
+
 type Criteria struct {
 	Value  interface{}
 	Weight float64

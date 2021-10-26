@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"bartender/internal/advertising"
 	"bartender/internal/infrastructure/broker"
+	"bartender/internal/infrastructure/database"
 	"fmt"
 	"log"
 
@@ -16,14 +17,18 @@ func Run() {
 		AppName:       "Bartender service v1.0.0-SNAPSHOT",
 	})
 	broker := broker.CreateConnection()
-	advertisingService := advertising.NewAdvertisingService(advertising.BrokerConnection{SendAsynMessage: broker.SendAsynMessage,
-		Topic: advertising.Topic{
-			ConfirmImpression: broker.GetBrokerConfig().CONFIRM_IMPRESSION,
-			RequestAd:         broker.GetBrokerConfig().REQUEST_AD,
-		}},
+	redisClient := database.NewRedisClient()
+	advertisingRepository := advertising.NewAdvertisingRepository(redisClient)
+	advertisingService := advertising.NewAdvertisingService(
+		advertising.BrokerConnection{SendAsynMessage: broker.SendAsynMessage,
+			Topic: advertising.Topic{
+				ConfirmImpression: broker.GetBrokerConfig().CONFIRM_IMPRESSION,
+				RequestAd:         broker.GetBrokerConfig().REQUEST_AD,
+			}},
+		advertisingRepository,
 	)
-	app.Group("/", middleware)
-	advertising.NewAdvertisingHandler(app.Group("/api"), advertisingService)
+	// app.Group("/api", middleware)
+	advertising.NewAdvertisingHandler(app.Group("/api/v1"), advertisingService)
 	log.Fatal(app.Listen(":8080"))
 }
 

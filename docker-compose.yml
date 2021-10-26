@@ -40,6 +40,12 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - "application"
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - "application"  
 networks:
   application:
     name: "application"
