@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "bartender/docs"
 	"bartender/internal/infrastructure"
 )
 

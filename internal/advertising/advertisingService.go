@@ -20,10 +20,20 @@ func NewAdvertisingService(broker BrokerConnection, repository AdvertisingReposi
 	}
 }
 
+// ChooseAdvertising is a function to get best advertising from database
+// @Summary Get advertising
+// @Description Discover best adivertising
+// @Tags advertising
+// @Accept json
+// @Produce json
+// @Param params body models.Params true "bidrequest"
+// @Success 200 {object} models.Advertising
+// @Failure 500 {object} nil
+// @Router /api/v1/choose-ad [post]
 func (s *advertisingService) ChooseAdvertising(c *fiber.Ctx) error {
 	var params models.Params
 	if err := c.BodyParser(&params); err != nil {
-		return fiber.NewError(fiber.StatusUnprocessableEntity, err.Error())
+		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
 	userInfo, err := s.repository.GetUserInfo(params.Context.User.ID)
@@ -54,6 +64,16 @@ func (s *advertisingService) ChooseAdvertising(c *fiber.Ctx) error {
 	return c.JSON(advertising)
 }
 
+// ConfirmImpression is a function to notify bartender when a ad was visualized
+// @Summary Notify advertising was visualized
+// @Description Notify advertising was visualized
+// @Tags impression
+// @Accept json
+// @Produce json
+// @Param confirmImpression body models.ConfirmImpression true "ConfirmImpression"
+// @Success 200 {object} nil
+// @Failure 500 {object} nil
+// @Router /api/v1/confirm-impression [post]
 func (s *advertisingService) ConfirmImpression(c *fiber.Ctx) error {
 	var confirmImpression models.ConfirmImpression
 	if err := c.BodyParser(&confirmImpression); err != nil {
@@ -72,6 +92,15 @@ func toString(bs []uint64) string {
 	return string(b)
 }
 
+// ChooseAdTest is a function to get best advertising from database
+// @Summary Get advertising test
+// @Description Discover best adivertising test
+// @Tags advertising test
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.Advertising
+// @Failure 500 {object} nil
+// @Router /api/v1/choose-ad-test [post]
 func (s *advertisingService) ChooseAdTest(c *fiber.Ctx) error {
 	return c.JSON(s.repository.FindAdvertisingTest())
 }

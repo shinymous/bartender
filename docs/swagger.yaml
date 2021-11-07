@@ -1,0 +1,265 @@
+definitions:
+  models.Advertising:
+    properties:
+      advertiser_id:
+        type: string
+      campaign_id:
+        type: string
+      creative_id:
+        type: string
+      ds:
+        type: string
+      impression_id:
+        type: string
+      publisher_id:
+        type: string
+    type: object
+  models.App:
+    properties:
+      cat:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      name:
+        type: string
+      publisher:
+        $ref: '#/definitions/models.Publisher'
+    type: object
+  models.ConfirmImpression:
+    properties:
+      impression_id:
+        type: string
+      interactions:
+        type: integer
+      visualization_time:
+        type: number
+    type: object
+  models.Context:
+    properties:
+      app:
+        $ref: '#/definitions/models.App'
+      device:
+        $ref: '#/definitions/models.Device'
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.Deal:
+    properties:
+      id:
+        type: string
+    type: object
+  models.Device:
+    properties:
+      dnt:
+        type: integer
+      h:
+        type: integer
+      hwv:
+        type: string
+      ip:
+        type: string
+      ipv6:
+        type: string
+      js:
+        type: integer
+      lang:
+        type: string
+      lmt:
+        type: integer
+      make:
+        type: string
+      model:
+        type: string
+      os:
+        type: string
+      osv:
+        type: string
+      ppi:
+        type: integer
+      pxratio:
+        type: number
+      type:
+        type: integer
+      ua:
+        type: string
+      w:
+        type: integer
+    type: object
+  models.Display:
+    properties:
+      h:
+        type: integer
+      pos:
+        type: integer
+      w:
+        type: integer
+    type: object
+  models.Geo:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      lat:
+        type: number
+      lon:
+        type: number
+      region:
+        type: string
+      type:
+        type: integer
+      zip:
+        type: string
+    type: object
+  models.Item:
+    properties:
+      deal:
+        $ref: '#/definitions/models.Deal'
+      flr:
+        type: number
+      flrcur:
+        type: string
+      id:
+        type: integer
+      private:
+        type: integer
+      qty:
+        type: integer
+      spec:
+        $ref: '#/definitions/models.Spec'
+    type: object
+  models.Params:
+    properties:
+      at:
+        type: integer
+      context:
+        $ref: '#/definitions/models.Context'
+      cur:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      item:
+        items:
+          $ref: '#/definitions/models.Item'
+        type: array
+      package:
+        type: integer
+      source:
+        $ref: '#/definitions/models.Source'
+      tmax:
+        type: integer
+    type: object
+  models.Placement:
+    properties:
+      display:
+        $ref: '#/definitions/models.Display'
+    type: object
+  models.Publisher:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  models.Source:
+    properties:
+      ds:
+        type: string
+    type: object
+  models.Spec:
+    properties:
+      placement:
+        $ref: '#/definitions/models.Placement'
+      sdk:
+        type: string
+      tagid:
+        type: string
+    type: object
+  models.User:
+    properties:
+      data:
+        items:
+          type: string
+        type: array
+      gender:
+        type: string
+      geo:
+        $ref: '#/definitions/models.Geo'
+      id:
+        type: string
+      keywords:
+        type: string
+      yob:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/choose-ad:
+    post:
+      consumes:
+      - application/json
+      description: Discover best adivertising
+      parameters:
+      - description: bidrequest
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/models.Params'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Advertising'
+        "500":
+          description: Internal Server Error
+      summary: Get advertising
+      tags:
+      - advertising
+  /api/v1/choose-ad-test:
+    post:
+      consumes:
+      - application/json
+      description: Discover best adivertising test
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Advertising'
+        "500":
+          description: Internal Server Error
+      summary: Get advertising test
+      tags:
+      - advertising test
+  /api/v1/confirm-impression:
+    post:
+      consumes:
+      - application/json
+      description: Notify advertising was visualized
+      parameters:
+      - description: ConfirmImpression
+        in: body
+        name: confirmImpression
+        required: true
+        schema:
+          $ref: '#/definitions/models.ConfirmImpression'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: Notify advertising was visualized
+      tags:
+      - impression
+swagger: "2.0"
