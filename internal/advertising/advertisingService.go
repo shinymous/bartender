@@ -71,7 +71,7 @@ func (s *advertisingService) ChooseAdvertising(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param confirmImpression body models.ConfirmImpression true "ConfirmImpression"
-// @Success 200 {object} nil
+// @Success 204 {object} nil
 // @Failure 500 {object} nil
 // @Router /api/v1/confirm-impression [post]
 func (s *advertisingService) ConfirmImpression(c *fiber.Ctx) error {

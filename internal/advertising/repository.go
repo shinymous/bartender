@@ -12,16 +12,18 @@ import (
 
 type redisClientRepository struct {
 	redisClient *redis.Client
+	broadcaster *string
 }
 
-func NewAdvertisingRepository(redisClient *redis.Client) AdvertisingRepository {
+func NewAdvertisingRepository(redisClient *redis.Client, broadcaster *string) AdvertisingRepository {
 	return &redisClientRepository{
 		redisClient: redisClient,
+		broadcaster: broadcaster,
 	}
 }
 
 func (r *redisClientRepository) GetUserInfo(ID string) (models.UserInfo, error) {
-	result, err := r.redisClient.Get(context.Background(), ID).Result()
+	result, err := r.redisClient.Get(context.Background(), ID+"_"+*r.broadcaster).Result()
 	if err != nil {
 		if err.Error() == "redis: nil" {
 			return models.UserInfo{}, nil
@@ -36,7 +38,7 @@ func (r *redisClientRepository) GetUserInfo(ID string) (models.UserInfo, error) 
 }
 
 func (r *redisClientRepository) SaveUserInfo(ID string, userInfo models.UserInfo) error {
-	err := r.redisClient.Set(context.Background(), ID, userInfo, 0).Err()
+	err := r.redisClient.Set(context.Background(), ID+"_"+*r.broadcaster, userInfo, 0).Err()
 	if err != nil {
 		fmt.Println(err)
 		return err
