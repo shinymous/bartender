@@ -59,7 +59,7 @@ func (s *advertisingService) ChooseAdvertising(c *fiber.Ctx) error {
 	}
 
 	advertising := s.repository.FindAdvertising(filter)
-	go SendRequestInfo(s.broker, params)
+	SendRequestInfo(s.broker, params)
 	go s.repository.SaveUserInfo(params.Context.User.ID, models.UserInfo{Timestamp: time.Now(), LastImpression: advertising.ImpressionId})
 	return c.JSON(advertising)
 }
@@ -79,7 +79,7 @@ func (s *advertisingService) ConfirmImpression(c *fiber.Ctx) error {
 	if err := c.BodyParser(&confirmImpression); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
-	go SendImpressionInfo(s.broker, confirmImpression)
+	SendImpressionInfo(s.broker, confirmImpression)
 	c.Response().SetStatusCode(fiber.StatusNoContent)
 	return c.Send(nil)
 }
@@ -106,9 +106,9 @@ func (s *advertisingService) ChooseAdTest(c *fiber.Ctx) error {
 }
 
 func SendImpressionInfo(brokerClient BrokerConnection, confirmImpression models.ConfirmImpression) {
-	brokerClient.SendAsynMessage(brokerClient.Topic.ConfirmImpression, confirmImpression)
+	brokerClient.SendMessage(brokerClient.Topic.ConfirmImpression, confirmImpression)
 }
 
 func SendRequestInfo(brokerClient BrokerConnection, params models.Params) {
-	brokerClient.SendAsynMessage(brokerClient.Topic.RequestAd, params)
+	brokerClient.SendMessage(brokerClient.Topic.RequestAd, params)
 }

@@ -17,28 +17,32 @@ services:
       - kafka
     command: ./docker-bartender
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: bitnami/zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      ALLOW_ANONYMOUS_LOGIN: yes
     ports:
       - 22181:2181  
     networks:
       - "application"
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: bitnami/kafka:latest
     depends_on:
       - zookeeper
     ports:
       - 29092:29092
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_ZOOKEEPER_TLS_VERIFY_HOSTNAME: false
+      KAFKA_TLS_CLIENT_AUTH: none
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CFG_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      ALLOW_PLAINTEXT_LISTENER: yes
     networks:
       - "application"
   redis:
@@ -46,7 +50,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - "application"  
+      - "application"
 networks:
   application:
     name: "application"

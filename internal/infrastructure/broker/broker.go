@@ -36,7 +36,7 @@ type BrokerConfig struct {
 }
 
 type BrokerConnection interface {
-	SendAsynMessage(topicName string, data interface{})
+	SendMessage(topicName string, data interface{})
 	GetBrokerConfig() BrokerConfig
 }
 
@@ -100,7 +100,7 @@ func (b brokerConnection) GetBrokerConfig() BrokerConfig {
 	}
 }
 
-func (b brokerConnection) SendAsynMessage(topicName string, data interface{}) {
+func (b brokerConnection) SendMessage(topicName string, data interface{}) {
 	writer := newKafkaWriter(topicName)
 	defer writer.Close()
 	key, err := uuid.NewV4()

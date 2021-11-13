@@ -20,11 +20,11 @@ type Topic struct {
 	RequestAd         string
 }
 
-type SendAsynMessage func(topicName string, data interface{})
+type SendMessage func(topicName string, data interface{})
 
 type BrokerConnection struct {
-	SendAsynMessage SendAsynMessage
-	Topic           Topic
+	SendMessage SendMessage
+	Topic       Topic
 }
 
 type AdvertisingRepository interface {

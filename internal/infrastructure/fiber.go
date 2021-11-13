@@ -32,7 +32,7 @@ func Run() {
 	redisClient := database.NewRedisClient()
 	advertisingRepository := advertising.NewAdvertisingRepository(redisClient, &broadcaster)
 	advertisingService := advertising.NewAdvertisingService(
-		advertising.BrokerConnection{SendAsynMessage: broker.SendAsynMessage,
+		advertising.BrokerConnection{SendMessage: broker.SendMessage,
 			Topic: advertising.Topic{
 				ConfirmImpression: broker.GetBrokerConfig().CONFIRM_IMPRESSION,
 				RequestAd:         broker.GetBrokerConfig().REQUEST_AD,
