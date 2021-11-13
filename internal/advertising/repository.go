@@ -153,7 +153,7 @@ func (r *redisClientRepository) FindAdvertising(advertisingFilter models.Adverti
 		},
 		{
 			ImpressionId: "16be3bbe-379d-4917-9f09-998f4d6d58d2",
-			CreativeId:   "db477daf-0b6e-4643-8a66-b07042a2dc67",
+			CreativeId:   "24fa363a-d9e2-47f1-827c-16c04c16d5b8",
 			PublisherId:  "051ce532-cd18-47a8-ad16-287111cf354d",
 			CampaignId:   "12593110-97a7-4f26-bc35-b46554a6602b",
 			AdvertiserId: "051ce532-cd18-47a8-ad16-287111cf354d",
@@ -226,7 +226,7 @@ func (r *redisClientRepository) FindAdvertising(advertisingFilter models.Adverti
 		},
 		{
 			ImpressionId: "16be3bbe-379d-4917-9f09-998f4d6d58d2",
-			CreativeId:   "db477daf-0b6e-4643-8a66-b07042a2dc67",
+			CreativeId:   "65d98595-ffcf-44bd-9998-5740da857a4e",
 			PublisherId:  "051ce532-cd18-47a8-ad16-287111cf354d",
 			CampaignId:   "12593110-97a7-4f26-bc35-b46554a6602b",
 			AdvertiserId: "051ce532-cd18-47a8-ad16-287111cf354d",
