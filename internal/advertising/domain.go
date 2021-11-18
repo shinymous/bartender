@@ -10,6 +10,7 @@ type AdvertisingService interface {
 	ChooseAdvertising(ctx *fiber.Ctx) error
 	ConfirmImpression(ctx *fiber.Ctx) error
 	ChooseAdTest(ctx *fiber.Ctx) error
+	GenerateUUID(ctx *fiber.Ctx) error
 }
 
 type Broker interface {

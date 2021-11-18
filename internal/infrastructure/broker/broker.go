@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/gofrs/uuid"
 	kafka "github.com/segmentio/kafka-go"
@@ -110,8 +111,9 @@ func (b brokerConnection) SendMessage(topicName string, data interface{}) {
 	reqBodyBytes := new(bytes.Buffer)
 	json.NewEncoder(reqBodyBytes).Encode(data)
 	msg := kafka.Message{
-		Key:   key.Bytes(),
+		Key:   []byte(key.String()),
 		Value: reqBodyBytes.Bytes(),
+		Time:  time.Now().UTC(),
 	}
 	if topicName == b.CONFIRM_IMPRESSION {
 		if err := writer.WriteMessages(context.Background(), msg); err != nil {

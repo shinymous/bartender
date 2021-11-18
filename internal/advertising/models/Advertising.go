@@ -51,3 +51,7 @@ type AdvertisingFilter struct {
 	City        string
 	DeviceModel string
 }
+
+type UUID struct {
+	UUID string `json:"uuid,omitempty"`
+}

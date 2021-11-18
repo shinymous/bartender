@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type advertisingService struct {
@@ -103,6 +104,14 @@ func toString(bs []uint64) string {
 // @Router /api/v1/choose-ad-test [post]
 func (s *advertisingService) ChooseAdTest(c *fiber.Ctx) error {
 	return c.JSON(s.repository.FindAdvertisingTest())
+}
+
+func (s *advertisingService) GenerateUUID(c *fiber.Ctx) error {
+	uuid, err := uuid.NewRandom()
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(models.UUID{UUID: uuid.String()})
 }
 
 func SendImpressionInfo(brokerClient BrokerConnection, confirmImpression models.ConfirmImpression) {
